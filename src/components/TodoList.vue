@@ -1,15 +1,16 @@
 <template>
    <div>
        <input type="text" class="todo-input" placeholder="whats next" v-model="newTodo" @keyup.enter="addTodo">
-       <div v-for="(todo, index) in filterTodos" :key="todo.id" class="todo-item">
-           <div class="todo-items">
-               <input type="checkbox" v-model="todo.completed">
-               <div v-if="!todo.editing" class="todo-item-label" v-bind:class="{completed : todo.completed}" @dblclick="editTodo(todo)">{{todo.title}}</div>
-               <input v-else v-focus class="todo-item-edit" type="text" v-model="todo.title"  @keyup.enter="doneEdit(todo)">
-           </div>
-           <button v-if="todo.editing" @click="cancelEdit(todo)">cancel</button>
-           <div @click="removeTodo(index)" class="remove-item">&times;</div>
-       </div>
+       <todo-item v-for="(todo, index) in filterTodos" :key="todo.id" :todo="todo" :index="index" :checkAll="!anyRemaining"
+                  @removedItem="removeTodo(index)" @finishedEdit="finishedEdit">
+<!--           <div class="todo-items">-->
+<!--               <input type="checkbox" v-model="todo.completed">-->
+<!--               <div v-if="!todo.editing" class="todo-item-label" v-bind:class="{completed : todo.completed}" @dblclick="editTodo(todo)">{{todo.title}}</div>-->
+<!--               <input v-else v-focus class="todo-item-edit" type="text" v-model="todo.title"  @keyup.enter="doneEdit(todo)">-->
+<!--           </div>-->
+<!--           <button v-if="todo.editing" @click="cancelEdit(todo)">cancel</button>-->
+<!--           <div @click="removeTodo(index)" class="remove-item">&times;</div>-->
+       </todo-item>
        <div class="extra-container">
            <div><label for=""><input type="checkbox" :checked="!anyRemaining" @change="checkAllTodos"> check all</label></div>
            <div>
@@ -26,8 +27,12 @@
 </template>
 
 <script>
+    import TodoItem from "./TodoItem";
     export default {
         name: 'todo-list',
+        components:{
+            TodoItem,
+        },
         data() {
             return{
                 newTodo: '',
@@ -77,22 +82,11 @@
             clearCompleted(){
                 this.todos = this.todos.filter(todo => !todo.completed)
             },
-            editTodo(todo){
-                this.beforeEdit = todo.title
-                todo.editing=!todo.editing
-            },
-            doneEdit(todo){
-                if (todo.title === ''){
-                    todo.title = this.beforeEdit
-                }
-                todo.editing = false
-            },
-            cancelEdit(todo){
-                todo.title = this.beforeEdit
-                todo.editing = false
-            },
             checkAllTodos(){
                 this.todos.forEach(todo => todo.completed = event.target.checked)
+            },
+            finishedEdit(data){
+                this.todos.splice(data.index, 1, data.todo)
             }
         },
         computed:{
@@ -121,6 +115,7 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css");
 .todo-input{
     width: 100%;
     padding: 10px 16px;
