@@ -49,7 +49,7 @@
 
         methods:{
             removeTodo(index) {
-                this.$emit('removedItem', index)
+                window.eventBus.$emit('removedItem', index)
             },
             editTodo(){
                 this.beforeEdit = this.title
@@ -60,7 +60,7 @@
                     this.title = this.beforeEdit
                 }
                 this.editing = false
-                this.$emit('finishedEdit',{
+                window.eventBus.$emit('finishedEdit',{
                     todo:{
                         id: this.id,
                         title: this.title,

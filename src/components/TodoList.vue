@@ -1,8 +1,7 @@
 <template>
    <div>
        <input type="text" class="todo-input" placeholder="whats next" v-model="newTodo" @keyup.enter="addTodo">
-       <todo-item v-for="(todo, index) in filterTodos" :key="todo.id" :todo="todo" :index="index" :checkAll="!anyRemaining"
-                  @removedItem="removeTodo(index)" @finishedEdit="finishedEdit">
+       <todo-item v-for="(todo, index) in filterTodos" :key="todo.id" :todo="todo" :index="index" :checkAll="!anyRemaining">
 <!--           <div class="todo-items">-->
 <!--               <input type="checkbox" v-model="todo.completed">-->
 <!--               <div v-if="!todo.editing" class="todo-item-label" v-bind:class="{completed : todo.completed}" @dblclick="editTodo(todo)">{{todo.title}}</div>-->
@@ -12,12 +11,8 @@
 <!--           <div @click="removeTodo(index)" class="remove-item">&times;</div>-->
        </todo-item>
        <div class="extra-container">
-           <div><label for=""><input type="checkbox" :checked="!anyRemaining" @change="checkAllTodos"> check all</label></div>
-           <div>
-               <button :class="{active : filter=='all'}" @click="filter='all'">all</button>
-               <button :class="{active : filter=='active'}" @click="filter='active'">queue</button>
-               <button :class="{active : filter=='completed'}" @click="filter='completed'">completed</button>
-           </div>
+            <check-all :anyRemaining="anyRemaining"></check-all>
+           <filter-option ></filter-option>
            <div>
                <button v-if="completed" @click="clearCompleted">clear completed</button>
            </div>
@@ -28,10 +23,14 @@
 
 <script>
     import TodoItem from "./TodoItem";
+    import CheckAll from "./CheckAll";
+    import FilterOption from "./FilterOption";
     export default {
         name: 'todo-list',
         components:{
             TodoItem,
+            CheckAll,
+            FilterOption,
         },
         data() {
             return{
@@ -55,6 +54,12 @@
                 ]
             }
        },
+        created(){
+          window.eventBus.$on('removedItem', (index)=> this.removeTodo(index))
+          window.eventBus.$on('finishedEdit', (data)=> this.finishedEdit(data))
+          window.eventBus.$on('checkedAll', (data)=> this.checkAllTodos(data))
+          window.eventBus.$on('changeFilter', (data)=> this.$store.state.filter= data)
+        },
         directives: {
           focus: {
               inserted: function (el) {
@@ -67,7 +72,7 @@
                 if (this.newTodo.trim().length === 0){
                     return
                 }
-                this.todos.push({
+                this.$store.state.todos.push({
                     id: this.todoid,
                     title: this.newTodo,
                     completed: false,
@@ -77,37 +82,30 @@
                 this.todoid++
             },
             removeTodo(indx){
-                this.todos.splice(indx, 1)
+                this.$store.state.todos.splice(indx, 1)
             },
             clearCompleted(){
-                this.todos = this.todos.filter(todo => !todo.completed)
+                this.$store.state.todos = this.$store.state.todos.filter(todo => !todo.completed)
             },
             checkAllTodos(){
-                this.todos.forEach(todo => todo.completed = event.target.checked)
+                this.$store.state.todos.forEach(todo => todo.completed = event.target.checked)
             },
             finishedEdit(data){
-                this.todos.splice(data.index, 1, data.todo)
+                this.$store.state.todos.splice(data.index, 1, data.todo)
             }
         },
         computed:{
             remaining(){
-                return this.todos.filter(todo => !todo.completed).length
+                return this.$store.getters.remaining
             },
             anyRemaining(){
-                return this.remaining != 0
+                return this.$store.getters.anyRemaining
             },
             completed(){
-              return this.todos.filter(todo => todo.completed).length > 0
+                return this.$store.getters.completed
             },
             filterTodos(){
-                if (this.filter == 'all'){
-                    return this.todos
-                }else if(this.filter == 'active'){
-                    return this.todos.filter(todo => !todo.completed)
-                }else if(this.filter == 'completed'){
-                    return this.todos.filter(todo => todo.completed)
-                }
-                return this.todos
+                return this.$store.getters.filterTodos
             }
         }
     }
