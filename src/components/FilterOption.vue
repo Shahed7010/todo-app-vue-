@@ -9,15 +9,14 @@
 <script>
     export default {
         name: "FilterOption",
-        data(){
-            return{
-                filter: 'all',
+        computed:{
+            filter(){
+                return this.$store.state.filter
             }
         },
         methods:{
             changeFilter(data){
-                this.filter=data
-                window.eventBus.$emit('changeFilter', data)
+                this.$store.dispatch('updateFilter', data)
             }
         }
     }

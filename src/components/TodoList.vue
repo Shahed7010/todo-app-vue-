@@ -11,7 +11,7 @@
 <!--           <div @click="removeTodo(index)" class="remove-item">&times;</div>-->
        </todo-item>
        <div class="extra-container">
-            <check-all :anyRemaining="anyRemaining"></check-all>
+            <check-all></check-all>
            <filter-option ></filter-option>
            <div>
                <button v-if="completed" @click="clearCompleted">clear completed</button>
@@ -37,61 +37,31 @@
                 newTodo: '',
                 todoid: 3,
                 beforeEdit:'',
-                filter: 'all',
-                todos:[
-                    {
-                        id:1,
-                        title:'complete the project',
-                        completed: false,
-                        editing : false,
-                    },
-                    {
-                        id:2,
-                        title:'get a job',
-                        completed: false,
-                        editing : false,
-                    }
-                ]
             }
        },
         created(){
-          window.eventBus.$on('removedItem', (index)=> this.removeTodo(index))
-          window.eventBus.$on('finishedEdit', (data)=> this.finishedEdit(data))
-          window.eventBus.$on('checkedAll', (data)=> this.checkAllTodos(data))
-          window.eventBus.$on('changeFilter', (data)=> this.$store.state.filter= data)
+          // window.eventBus.$on('removedItem', (index)=> this.removeTodo(index))
+          // window.eventBus.$on('finishedEdit', (data)=> this.finishedEdit(data))
+          // window.eventBus.$on('checkedAll', (data)=> this.checkAllTodos(data))
+          // window.eventBus.$on('changeFilter', (data)=> this.$store.state.filter= data)
         },
-        directives: {
-          focus: {
-              inserted: function (el) {
-                  el.focus()
-              }
-          }
-        },
+
         methods:{
             addTodo(){
                 if (this.newTodo.trim().length === 0){
                     return
                 }
-                this.$store.state.todos.push({
+                this.$store.dispatch('addTodo', {
                     id: this.todoid,
                     title: this.newTodo,
-                    completed: false,
-                    editing: false,
+
                 })
+
                 this.newTodo = ''
                 this.todoid++
             },
-            removeTodo(indx){
-                this.$store.state.todos.splice(indx, 1)
-            },
             clearCompleted(){
-                this.$store.state.todos = this.$store.state.todos.filter(todo => !todo.completed)
-            },
-            checkAllTodos(){
-                this.$store.state.todos.forEach(todo => todo.completed = event.target.checked)
-            },
-            finishedEdit(data){
-                this.$store.state.todos.splice(data.index, 1, data.todo)
+                this.$store.dispatch('clearCompleted')
             }
         },
         computed:{

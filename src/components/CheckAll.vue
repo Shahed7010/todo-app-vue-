@@ -6,15 +6,14 @@
 <script>
     export default {
         name: "CheckAll",
-        props:{
-            anyRemaining:{
-                type: Boolean,
-                required: true
+        computed:{
+            anyRemaining(){
+                return this.$store.getters.anyRemaining
             }
         },
         methods:{
             checkAllTodos(){
-                window.eventBus.$emit('checkedAll')
+                this.$store.dispatch('checkAllTodos')
             }
         }
     }
