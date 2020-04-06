@@ -13,7 +13,7 @@
         },
         methods:{
             checkAllTodos(){
-                this.$store.dispatch('checkAllTodos')
+                this.$store.dispatch('checkAllTodos',event.target.checked)
             }
         }
     }

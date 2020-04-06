@@ -25,6 +25,7 @@
     import TodoItem from "./TodoItem";
     import CheckAll from "./CheckAll";
     import FilterOption from "./FilterOption";
+
     export default {
         name: 'todo-list',
         components:{
@@ -44,6 +45,7 @@
           // window.eventBus.$on('finishedEdit', (data)=> this.finishedEdit(data))
           // window.eventBus.$on('checkedAll', (data)=> this.checkAllTodos(data))
           // window.eventBus.$on('changeFilter', (data)=> this.$store.state.filter= data)
+            this.$store.dispatch('retrieveTodo')
         },
 
         methods:{
