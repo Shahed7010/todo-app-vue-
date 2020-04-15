@@ -1,5 +1,6 @@
 <template>
    <div>
+       <div class="name_container">Welcome {{name}}</div>
        <input type="text" class="todo-input" placeholder="whats next" v-model="newTodo" @keyup.enter="addTodo">
        <todo-item v-for="(todo, index) in filterTodos" :key="todo.id" :todo="todo" :index="index" :checkAll="!anyRemaining">
 <!--           <div class="todo-items">-->
@@ -38,6 +39,7 @@
                 newTodo: '',
                 todoid: 3,
                 beforeEdit:'',
+                name: '',
             }
        },
         created(){
@@ -46,6 +48,9 @@
           // window.eventBus.$on('checkedAll', (data)=> this.checkAllTodos(data))
           // window.eventBus.$on('changeFilter', (data)=> this.$store.state.filter= data)
             this.$store.dispatch('retrieveTodo')
+            this.$store.dispatch('retrieveUser').then( response => {
+                this.name = response.data.name
+                })
         },
 
         methods:{
@@ -153,5 +158,12 @@
     }
     .active{
         background: lawngreen;
+    }
+    .name_container{
+        display: flex;
+        justify-content: center;
+        font-weight: bold;
+        color: #42b983;
+        margin-bottom: 20px;
     }
 </style>
