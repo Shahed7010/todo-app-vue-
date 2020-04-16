@@ -24,7 +24,13 @@
             </div>
 
             <div class="form-control">
-                <button type="submit" class="btn-submit">Create Account</button>
+                <button type="submit" class="btn-submit creating" :disabled="loading">
+                    <div class="bar-spinner" v-if="loading" style="width: 100px">
+                        <div class="loadingio-spinner-bars-mfz7rqo4kz"><div class="ldio-kdlwpjk415c">
+                            <div></div><div></div><div></div><div></div>
+                        </div></div>
+                    </div>
+                    Create Account</button>
             </div>
 
         </form>
@@ -40,21 +46,25 @@
                 email: '',
                 password: '',
                 serverError:'',
+                loading: false,
             }
         },
         methods:{
             register(){
+                this.loading = true
                 this.$store.dispatch('registerUser',{
                     name: this.name,
                     email: this.email,
                     password: this.password,
                     // eslint-disable-next-line no-unused-vars
                 }).then(response => {
-                        this.$router.push({ name: 'login',params:{
+                    this.loading = false
+                    this.$router.push({ name: 'login',params:{
                             success: 'user registered successfully'
                             }})
                     }
                 ).catch(error => {
+                    this.loading = false
                     this.serverError = error.response.data.errors
                 })
             }
@@ -63,5 +73,7 @@
 </script>
 
 <style scoped>
-
+    .creating{
+        content: 'creating';
+    }
 </style>

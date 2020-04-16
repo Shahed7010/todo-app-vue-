@@ -20,7 +20,14 @@
             </div>
 
             <div class="form-control">
-                <button type="submit" class="btn-submit">Login</button>
+                <button type="submit" class="btn-submit" :disabled="loading">
+                    <div class="bar-spinner" v-if="loading">
+                    <div class="loadingio-spinner-bars-mfz7rqo4kz"><div class="ldio-kdlwpjk415c">
+                        <div></div><div></div><div></div><div></div>
+                    </div></div>
+                    </div>
+                        Login
+                </button>
             </div>
 
         </form>
@@ -41,18 +48,22 @@
                 password: '',
                 serverError:'',
                 serverSuccess: this.success,
+                loading: false,
             }
         },
         methods:{
             login(){
+                this.loading = true
                 this.$store.dispatch('loginToken',{
                     email: this.email,
                     password: this.password
                     // eslint-disable-next-line no-unused-vars
                 }).then(response => {
-                        this.$router.push({ name: 'app'})
+                    this.loading = false
+                    this.$router.push({ name: 'app'})
                     }
                 ).catch(error =>{
+                    this.loading = false
                     this.serverError = error.response.data
                     this.password=''
                     this.serverSuccess=''

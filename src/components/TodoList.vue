@@ -150,7 +150,11 @@
         background-color: white;
         appearance: none;
         &:hover{
-            background: aqua;
+            background: limegreen;
+        }
+        &:disabled{
+            background: lighten(limegreen,25%);
+            cursor: not-allowed;
         }
         &:focus{
             outline: none;

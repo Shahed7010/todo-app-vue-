@@ -1,6 +1,6 @@
 <template>
-    <div class="flex-center">
-        this is the landing page
+    <div class="flex-center" style="margin-top: 200px">
+        <h1>Welcome to the Todo-List!</h1>
     </div>
 </template>
 
